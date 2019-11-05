@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- meta data -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!--font-family-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&amp;subset=devanagari,latin-ext" rel="stylesheet">
+
+    <!-- title of site -->
+    <title>DCITS投票系统-登录</title>
+
+    <!-- For favicon png -->
+    <link rel="shortcut icon" type="image/icon" href="assets/logo/favicon.png"/>
+
+    <!--font-awesome.min.css-->
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+
+    <!--animate.css-->
+    <link rel="stylesheet" href="assets/css/animate.css">
+
+    <!--bootstrap.min.css-->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+    <!-- bootsnav -->
+    <link rel="stylesheet" href="assets/css/bootsnav.css" >
+
+    <!--style.css-->
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!--responsive.css-->
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        .title{
+            text-align: center;
+            margin-top: -70px;
+            margin-bottom: 70px;
+        }
+        .title h1{
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body>
+<!--[if lte IE 9]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+<![endif]-->
+
+<!-- signin end -->
+<section class="signin popup-in">
+    <div class="title">
+        <h1>DCITS投票系统</h1>
+    </div>
+    <div class="container">
+        <div class="sign-content popup-in-content">
+            <div class="popup-in-txt">
+                <h2>登 录</h2>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="signin-form">
+                            <form class="login-form" method="post">
+                                <div class="form-group">
+                                    <label for="itcode">ITCODE</label>
+                                    <input type="itcode" class="form-control" id="itcode" name="itcode" placeholder="请输入ITCODE">
+                                </div><!--/.form-group -->
+                                <div class="form-group">
+                                    <label for="password">密码</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码">
+                                </div><!--/.form-group -->
+                            </form><!--/form -->
+                        </div><!--/.signin-form -->
+                    </div><!--/.col -->
+                </div><!--/.row -->
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="vote_id">
+                            当前投票活动：
+                            <select id="voteId" class="voteId select-form-tc" name="voteId" lay-filter="voteId">
+                                 <option th:each="vlist:${voteList}" th:value="${vlist.id}" th:text="${vlist.name}"></option>
+                            </select>
+                        </div><!--/.signin-password -->
+                    </div><!--/.col -->
+                </div><!--/.row -->
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="signin-footer">
+                            <button type="button" class="btn signin_btn">
+                                登  录
+                            </button>
+                            <!-- <p>
+                                还没有账号？
+                                <a href="popupsignup.html">注册</a>
+                            </p> -->
+                        </div><!--/.signin-footer -->
+                    </div><!--/.col-->
+                </div><!--/.row -->
+            </div><!-- .popup-in-txt -->
+        </div><!--/.sign-content -->
+    </div><!--/.container -->
+
+</section><!--/.signin -->
+
+<!-- signin end -->
+
+<!--footer copyright start -->
+<footer class="footer-copyright">
+    <div id="scroll-Top">
+        <i class="fa fa-angle-double-up return-to-top" id="back" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to Top" aria-hidden="true"></i>
+    </div><!--/.scroll-Top-->
+
+</footer><!--/.hm-footer-copyright-->
+<!--footer copyright  end -->
+
+
+<!-- Include all js compiled plugins (below), or include individual files as needed -->
+
+<script src="assets/js/jquery.js"></script>
+
+<!--modernizr.min.js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+<!--bootstrap.min.js-->
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- bootsnav js -->
+<script src="assets/js/bootsnav.js"></script>
+
+<!-- jquery.sticky.js -->
+<script src="assets/js/jquery.sticky.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script type="text/javascript" src="lib/layui/layui.js"></script>
+
+<!--Custom JS-->
+<script src="assets/js/custom.js"></script>
+<script type="text/javascript">
+    //layui实例化
+    layui.use('layer', function() { //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        initialize();
+
+        function initialize(){
+            var voteId= $("#voteId").val();
+            if (voteId == null){
+                $("#voteId").prepend("<option value='0'>当前还没有投票活动</option>");  //为Select插入一个Option(第一个位置)
+                layer.msg("目前还没有投票活动哦，敬请期待吧", {offset: '200px', icon: 1});
+                $(".btn").attr("disabled",true);
+                return false;
+            }
+        }
+
+        $(".signin_btn").click(function () {
+            var itcode = $("#itcode").val();
+            var password = $("#password").val();
+            if(itcode==""||itcode==null){
+                layer.msg("ITCODE不能为空");
+                return false;
+            }
+            if(password==""||password==null){
+                layer.msg("密码不能为空");
+                return false;
+            }
+            $.post("/vote/login"
+                , {"itcode": itcode, "password": password}
+                , function (result) {
+                    var ret = JSON.parse(result);
+                    if (ret.code == 200) {
+                        var id= $("#voteId").val();
+                        layer.msg("登录成功", {offset: '300px', icon: 1});
+                        setTimeout(function () {
+                            window.location.href = "/vote/index?itcode="+itcode+"&voteId="+id;
+                        }, 300);
+                    } else {
+                        layer.msg("用户名或密码错误", {offset: '300px', icon: 3});
+                    }
+                }
+            );
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DCITS内部投票系统</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="lib/layui/css/layui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="lib/layui/layui.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+    <style type="text/css">
+        #text{
+            width: 100%;
+            height: 200px;
+            border: none;
+            overflow:hidden;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="marketing" onmouseout="out()" onmouseover="over()">
+    <div class="marketing-title" th:text="${voteName}"></div>
+    <input class="voteId" th:value="${voteId}" hidden="hidden"/>
+    <div class="click_button">
+        <div class="click_a">
+            <a href="javascript:;" class="hover_L">
+                <img src="/vote/images/left.png" alt="">
+            </a>
+        </div>
+        <div class="click_b">
+            <a href="javascript:;" class="hover_R">
+                <img src="/vote/images/right.png" alt="">
+            </a>
+        </div>
+    </div>
+    <div class="mark-main">
+        <div class="click_con" >
+            <div class="system_list" th:each="clist : ${candidateList}">
+                <div class="system_list_tit">
+							<span>
+							    <img th:src="${clist.image}" alt="">
+							</span>
+                    <div class="system_list_iformation">
+                        <span>
+                            <em></em>
+                            <strong th:text="${clist.name}"></strong>
+                        </span>
+                        <p th:text="${clist.department}"></p>
+                    </div>
+                </div>
+                <div class="system_list_con">
+                    <div class="mark-main-list">
+                      <!--  <p>-->
+                            <textarea name="text" id="text" lay-verify="required" class="layui-textarea" th:text="${clist.text}"></textarea>
+                            <!--<strong th:text="${clist.text}"></strong>-->
+                       <!-- </p>-->
+                    </div>
+                </div>
+                <div class="layer-mask"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="list-topics" class="list-topics">
+    <div class="container">
+        <div class="list-topics-content">
+            <ul>
+                <li th:each="calist : ${candidateList}">
+                    <div class="single-list-topics-content">
+                        <input class="cId" hidden="hidden" th:value="${calist.id}"/>
+                        <div class="single-list-topics-icon">
+                            <img th:src="${calist.image}"/>
+                        </div>
+                        <h3 th:text="${calist.name}"></h3>
+                        <br/>
+                        <!--<p>123</p>-->
+                        <input class="tick-show" th:value="${calist.show}" hidden="hidden"/>
+                        <img class="tick" src="/vote/images/对勾.png"/>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div><!--/.container-->
+
+</section><!--/.list-topics-->
+<div class="submit-container">
+    <input class="itcode" th:value="${itcode}" hidden="hidden" />
+    <input class="choice" th:value="${choice}" hidden="hidden" />
+    <input class="voteCount" th:value="${voteCount}" hidden="hidden" />
+    <button type="button" class="submit-btn">提交</button>
+</div>
+</body>
+<script type="text/javascript">
+    var voteCount= $(".voteCount").val();
+   /* setMarkingHeight();
+
+    //动态设置marketing高度
+    function setMarkingHeight(){
+        var height=0;
+        height= window.innerHeight;
+        $(".marketing").height(height);
+    }*/
+    //页面初始化设置
+   initialize();
+   //鼠标移入执行
+   over();
+   //鼠标移出
+   out();
+
+   //字符串显示在富文本中
+   function toTextarea(str) {
+       if (str != "" && str != null) {
+           var reg = new RegExp("<br/>", "g");
+           var regSpace = new RegExp("", "g");
+           str = str.replace(reg, "\n");
+           str = str.replace(regSpace, "");
+           return str;
+       }
+   }
+
+   //富文本字符串转成存储到数据库格式
+   function textareaTo(str) {
+       if (str != "" && str != null) {
+           var reg = new RegExp("\r\n", "g");
+           var regOther = new RegExp("\n", "g");
+           var regSpace = new RegExp("\s", "g");
+           str = str.replace(reg, "<br/>");
+           str = str.replace(regOther, "<br/>");
+           str = str.replace(regSpace, "");
+           return str;
+       }
+   }
+
+
+   function over(){
+       $(".click_a,.click_b").show();
+   }
+
+   function out(){
+       $(".click_a,.click_b").hide();
+   }
+
+   //主页面初始化
+   function initialize(){
+       $('.click_con').children().eq(2).addClass("new_cur");
+
+       var choice= $(".choice").val();
+       if(choice!=null && choice!=""){
+           $("div.single-list-topics-content").each(function(st){
+               if($(this).find(".tick-show").val()!=null && $(this).find(".tick-show").val()==1){
+                   $(this).find(".tick").show();
+               }
+           });
+           $(".single-list-topics-content").attr("disabled",true);
+           $(".submit-btn").attr("disabled",true);
+       }
+
+       var i=0;
+       $("div.system_list_iformation").each(function(i){
+           $(this).find("em").each(function(){
+               if(i<=4){
+                   $(this).addClass("em" + (i+1));
+               }else if(i>4){
+                   $(this).addClass("em" + (i-5+1));
+               }else{
+                   $(this).addClass("em1");
+               }
+           });
+       });
+
+
+   }
+
+   //layui实例化
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        var len= 0;
+        //点击入选人时,触发事件
+        $(".single-list-topics-content").click(function(){
+            var img= $(this).children(".tick");
+            if(img.is(":hidden")){
+                img.show();    //如果元素为隐藏,则将它显现
+            }else{
+                img.hide();     //如果元素为显现,则将其隐藏
+            }
+            checkNumber(img);
+        });
+
+        //验证勾选个数儿
+        function checkNumber(img){
+            var length=0;
+            $(".tick").each(function() {
+                if($(this).is(':visible')){
+                    length++;
+                }
+            });
+            if(length>voteCount){
+                img.hide();
+                layer.msg("您已经选定了"+voteCount+"位入选人", {offset: '300px', icon: 4});
+            }else{
+                len= length;
+            }
+        }
+
+        //点击提交按钮触发事件
+        $(".submit-btn").click(function(){
+            if(len==0){
+                layer.msg("请先选择要投的入选人", {offset: '300px', icon: 3});
+                return;
+            }else if(len<voteCount && voteCount!=1){
+                layer.msg("必须选择"+voteCount+"个入选人哦", {offset: '300px', icon: 6});
+                return;
+            }else{
+                var itcode= $(".itcode").val();
+                var voteId= $(".voteId").val();
+                var list= "";
+                $("div.single-list-topics-content").each(function(){
+                    if($(this).find(".tick").is(':visible')){
+                        list=list + $(this).find(".cId").val() +",";
+                    }
+                });
+                $.post("/vote/vote"
+                    , {"itcode":itcode,"voteId":voteId,"list": list}
+                    , function (result) {
+                        var ret = JSON.parse(result);
+                        if (ret.code == 1) {
+                            layer.msg(ret.msg, {offset: '300px', icon: 1});
+                        } else {
+                            layer.msg(ret.msg, {offset: '300px', icon: 3});
+                        }
+                    }
+                );
+            }
+        });
+
+    });
+
+
+</script>
+</html>

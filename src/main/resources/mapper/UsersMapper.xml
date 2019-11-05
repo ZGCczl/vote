@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dcits.dao.UsersMapper">
+  <resultMap id="BaseResultMap" type="com.dcits.pojo.Users">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="itcode" jdbcType="VARCHAR" property="itcode" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="department" jdbcType="VARCHAR" property="department" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, "name", itcode, "password", department
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from users
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from users
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.dcits.pojo.Users">
+    <!--@mbg.generated-->
+    insert into users (id, "name", itcode, 
+      "password", department)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{itcode,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dcits.pojo.Users">
+    <!--@mbg.generated-->
+    insert into users
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        "name",
+      </if>
+      <if test="itcode != null">
+        itcode,
+      </if>
+      <if test="password != null">
+        "password",
+      </if>
+      <if test="department != null">
+        department,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="itcode != null">
+        #{itcode,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null">
+        #{department,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dcits.pojo.Users">
+    <!--@mbg.generated-->
+    update users
+    <set>
+      <if test="name != null">
+        "name" = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="itcode != null">
+        itcode = #{itcode,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        "password" = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null">
+        department = #{department,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dcits.pojo.Users">
+    <!--@mbg.generated-->
+    update users
+    set "name" = #{name,jdbcType=VARCHAR},
+      itcode = #{itcode,jdbcType=VARCHAR},
+      "password" = #{password,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="findUsers" resultType="com.dcits.pojo.Users">
+    select itcode,name from users;
+  </select>
+
+  <select id="findUserByItcode" resultMap="BaseResultMap">
+    select * from users where itcode=#{itcode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findUserIdByItcode" resultType="java.lang.Integer">
+    select id from users where itcode=#{itcode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="countUsers" resultType="java.lang.Integer">
+    select count(id) from users
+  </select>
+</mapper>
