@@ -35,4 +35,8 @@ public interface VoteMapper {
     Integer countUpcoming();
 
     Integer countFinished();
+
+    List<Vote> findVoteOfNotStarted();
+
+    List<Vote> findVoteOfFinish();
 }

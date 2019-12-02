@@ -13,9 +13,9 @@ public interface VoteService {
 
     PageInfo<Vote> findVoteWithPage(int page, int pageSize, String name);
 
-    int edit(int id, String name, String starttime, String endtime, Integer candidateCount, Integer voteCount);
+    int edit(int id, String name, String starttime, String endtime, Integer candidateCount, Integer voteCount,String explain);
 
-    int add(String name, String starttime, String endtime, Integer candidateCount, Integer voteCount);
+    int add(String name, String starttime, String endtime, Integer candidateCount, Integer voteCount,String explain);
 
     int delete(int id);
 
@@ -24,4 +24,8 @@ public interface VoteService {
     HashMap<String, Integer> findCount();
 
     Vote findVoteByVoteid(Integer voteId);
+
+    List<Vote> findVoteOfNotStarted();
+
+    List<Vote> findVoteOfFinish();
 }

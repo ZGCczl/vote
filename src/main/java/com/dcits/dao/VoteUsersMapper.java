@@ -4,6 +4,8 @@ import com.dcits.pojo.VoteUsers;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface VoteUsersMapper {
     int deleteByPrimaryKey(Integer id);
@@ -19,4 +21,6 @@ public interface VoteUsersMapper {
     int updateByPrimaryKey(VoteUsers record);
 
     String findChoiceByUserIdAndVoteId(@Param("userId") Integer userId, @Param("voteId") Integer voteId);
+
+    List<VoteUsers> findVoteUsersByUsersIdAndVoteId(@Param("userId")Integer userId,@Param("voteId")Integer voteId);
 }

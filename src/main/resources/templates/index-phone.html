@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DCITS内部投票系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1  maximum-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="HandheldFriendly" content="True">
+
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/materialize.min.css">
+    <link rel="stylesheet" href="css/slick.css">
+    <link rel="stylesheet" href="css/slick-theme.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/owl.theme.css">
+    <link rel="stylesheet" href="css/owl.transitions.css">
+    <link href="lib/layui/css/layui.css" rel="stylesheet" type="text/css"/>
+    <!--<link rel="stylesheet" href="css/lightbox.min.css">-->
+    <link rel="stylesheet" href="css/style-phone.css">
+    <link rel="stylesheet" href="css/style-vote.css">
+
+    <style type="text/css">
+        .slider-slick{
+            background: #EFEFF2;
+        }
+        .col{
+            position: relative;
+            border:1px solid #e6e6e6;
+            border-radius: 10px;
+            margin: 4px 20px;
+            background: white;
+            text-align: left;
+
+        }
+        .col span{
+            position:absolute;
+            top: 20px;
+            left: 85px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .col strong{
+            position:absolute;
+            top: 45px;
+            left: 85px;
+            font-size: 13px;
+            font-weight: 400;
+        }
+        .technology{
+            margin-top: 30px;
+        }
+        .icon-titl{
+            width: 60px;
+            height: 60px;
+            margin: 10px;
+            border-radius: 50%;
+        }
+        .system_list_tit img{
+            width: 80px;
+            height: 100px;
+        }
+        .system_list_iformation{
+            margin-left: 100px;
+            margin-top: -60px;
+        }
+        .tick{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 20px;
+            right: 70px;
+            display: none;
+        }
+        .entry{
+            position: relative;
+        }
+        .submit-container{
+            text-align: center;
+            margin-top: 40px;
+        }
+        .submit-btn{
+            width: 250px;
+            height: 35px;
+            background: lightseagreen;
+            border: none;
+            border-radius: 20px;
+            color: white;
+        }
+        #text,#explain{
+            height:210px;
+            border: none;
+            font-size: 14px;
+            color: black;
+        }
+        #text{
+            background: #EFEFF2;
+        }
+        .style{
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="container">
+        <div class="site-title">
+            <h1 th:text="${voteName}"></h1>
+            <input class="voteId" th:value="${voteId}" hidden="hidden"/>
+        </div>
+    </div>
+</div>
+<!-- slider -->
+<div class="slider-slick app-pages">
+    <div class="slider-entry" th:each="clist : ${candidateList}">
+        <div class="system_list">
+            <div class="system_list_tit">
+					<span>
+						<img th:src="${clist.image}" alt="">
+					</span>
+                <div class="system_list_iformation">
+						<span class="system_list_iformation_span">
+							<em></em>
+							<strong th:text="${clist.name}"></strong>
+						</span>
+                    <p th:text="${clist.department}"></p>
+                </div>
+            </div>
+            <div class="system_list_con">
+                <div class="mark-main-list">
+                    <textarea name="text" id="text" lay-verify="required" class="layui-textarea" th:text="${clist.text}"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end slider -->
+
+<!-- who we are -->
+<div class="who-we-are app-section">
+    <div class="container">
+        <div class="app-title">
+            <h4>投票活动说明</h4>
+            <div class="line"></div>
+        </div>
+        <div class="entry">
+            <textarea name="text" id="explain" lay-verify="required" class="layui-textarea" th:text="${explain}"></textarea>
+        </div>
+    </div>
+</div>
+<!-- end  who we are -->
+
+<!-- our services -->
+<div class="service app-section app-bg-dark">
+    <div class="container">
+        <div class="app-title">
+            <h4>投票选择区</h4>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <div class="col s12" th:each="calist : ${candidateList}">
+                <div class="entry">
+                    <input class="cId" hidden="hidden" th:value="${calist.id}"/>
+                    <img class="icon-titl" th:src="${calist.image}" />
+                    <span th:text="${calist.name}"></span>
+                    <strong th:text="${calist.department}"></strong>
+                    <input class="tick-show" th:value="${calist.show}" hidden="hidden"/>
+                    <img class="tick" src="/images/check.png"/>
+                </div>
+            </div>
+        </div>
+        <div class="submit-container">
+            <input class="itcode" th:value="${itcode}" hidden="hidden" />
+            <input class="choice" th:value="${choice}" hidden="hidden" />
+            <input class="voteCount" th:value="${voteCount}" hidden="hidden" />
+            <button type="button" class="submit-btn">提交</button>
+        </div>
+    </div>
+</div>
+<!-- end our services -->
+
+<!-- portfolio -->
+<div class="portfolio app-section" hidden="hidden">
+    <div class="container">
+        <div class="app-title">
+            <h4>简介展示</h4>
+            <div class="line"></div>
+        </div>
+        <ul class="portfolio-filter">
+            <li data-filter="all" class="active">所有</li>
+            <li data-filter="1">组织架构</li>
+            <li data-filter="2">技术范畴</li>
+        </ul>
+        <div class="portfolio-item">
+            <div class="row">
+                <div class="col s4 filtr-item" data-category="1, 2">
+                    <a href="/images/check.png" data-lightbox="image-1"><img src="/images/check.png" alt=""></a>
+                </div>
+                <div class="col s4 filtr-item" data-category="3, 4">
+                    <a href="/images/check.png" data-lightbox="image-1"><img src="/images/check.png" alt=""></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end portfolio -->
+
+<!-- script -->
+<script src="js/jquery.min.js"></script>
+<script src="js/materialize.min.js"></script>
+<script src="js/slick.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.filterizr.min.js"></script>
+<script src="js/index.js"></script>
+<!--<script src="js/lightbox.min.js"></script>-->
+<script src="js/custom.js"></script>
+<script src="lib/layui/layui.js"></script>
+<script type="text/javascript">
+    var voteCount= $(".voteCount").val();
+    initialize();
+
+    //主页面初始化
+    function initialize(){
+
+        var choice= $(".choice").val();
+        if(choice!=null && choice!=""){
+            $("div.entry").each(function(st){
+                if($(this).find(".tick-show").val()!=null && $(this).find(".tick-show").val()==1){
+                    $(this).find(".tick").show();
+                }
+            });
+            $(".entry").addClass("style");
+           /* $(".submit-btn").attr("disabled",true);*/
+        }
+        var i=0;
+        $("div.system_list_tit").each(function(i){
+            $(this).find("em").each(function(){
+                if(i<=4){
+                    $(this).addClass("em-" + (i+1));
+                }else if(i>4){
+                    $(this).addClass("em-" + (i-5+1));
+                }else{
+                    $(this).addClass("em-1");
+                }
+            });
+        });
+
+    }
+
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        var len= 0;
+        //点击入选人时,触发事件
+        $(".entry").click(function(){
+            var img= $(this).children(".tick");
+            if(img.is(":hidden")){
+                img.show();    //如果元素为隐藏,则将它显现
+            }else{
+                img.hide();     //如果元素为显现,则将其隐藏
+            }
+            checkNumber(img);
+        });
+
+        //验证勾选个数儿
+        function checkNumber(img){
+            var length=0;
+            $(".tick").each(function() {
+                if($(this).is(':visible')){
+                    length++;
+                }
+            });
+            if(length>5){
+                img.hide();
+                layer.msg("您已经选定了5位入选人", {offset: '300px', icon: 4});
+            }else{
+                len= length;
+            }
+        }
+
+        //点击提交按钮触发事件
+        $(".submit-btn").click(function(){
+            var choice= $(".choice").val();
+            if(choice!=null && choice!=""){
+                layer.alert('您已经参与了本次投票，非常感谢您的参与！', {icon: 6});
+                return;
+            }
+            if(len==0){
+                layer.msg("请先选择要投的入选人", {offset: '300px', icon: 3});
+                return;
+            }else if(len<voteCount && voteCount!=1){
+                layer.msg("必须选择"+voteCount+"个入选人哦", {offset: '300px', icon: 6});
+                return;
+            }else{
+                var itcode= $(".itcode").val();
+                var voteId= $(".voteId").val();
+                var list= "";
+                $("div.entry").each(function(){
+                    if($(this).find(".tick").is(':visible')){
+                        list=list + $(this).find(".cId").val() +",";
+                    }
+                });
+                layer.alert('本次投票每人只有一次机会，您确认选择投给这'+voteCount+'位选手吗？', {
+                    closeBtn: 1    // 是否显示关闭按钮
+                    , anim: 1 //动画类型
+                    , btn: ['确定', '取消'] //按钮
+                    , icon: 1    // icon
+                    , offset:'200px'
+                    , yes: function () {
+                        $.post("/vote/vote"
+                            , {"itcode":itcode,"voteId":voteId,"list": list}
+                            , function (result) {
+                                var ret = JSON.parse(result);
+                                if (ret.code == 1) {
+                                    $(".entry").addClass("style");
+                                    $(".submit-btn").attr("disabled",true);
+                                    layer.msg(ret.msg, {offset: '300px', icon: 1});
+                                } else {
+                                    layer.msg(ret.msg, {offset: '300px', icon: 3});
+                                }
+                            }
+                        );
+                    }
+                    , btn2: function () {
+                        layer.msg('好的,您重新选择。',{offset: '300px', icon: 3});
+                    }
+                });
+
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

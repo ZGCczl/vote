@@ -3,6 +3,7 @@ package com.dcits.service.Impl;
 import com.dcits.dao.CandidateMapper;
 import com.dcits.pojo.Candidate;
 import com.dcits.pojo.Vote;
+import com.dcits.pojo.VoteUsers;
 import com.dcits.service.CandidateService;
 import com.dcits.service.UsersService;
 import com.dcits.service.VoteService;
@@ -59,21 +60,26 @@ public class CandidateServiceImpl implements CandidateService {
         //获取用户id
         Integer userId= this.usersService.findUserIdByItcode(itcode);
         //添加用户和投票活动关联信息（用户投票信息）
-        Integer codeUser= this.voteUsersService.addVoteUsersByUsersIdAndVoteId(userId,voteId,list);
-        if(codeUser<=0){
+        List<VoteUsers> voteUsers= this.voteUsersService.findVoteUsersByUsersIdAndVoteId(userId,voteId);
+        if(voteUsers.size()!=0){
             return -1;
         }else{
-            //同步代码块 防止用户并发操作导致投票数据错误或丢失
-            synchronized (this){
-                String[] strings= null;
-                strings= list.split(",");
-                for(int i=0;i<strings.length;i++){
-                    Integer codeCandidate= this.candidateMapper.updatePollById(Integer.parseInt(strings[i]));
-                    if(codeCandidate<=0){
-                        return -1;
+            Integer codeUser= this.voteUsersService.addVoteUsersByUsersIdAndVoteId(userId,voteId,list);
+            if(codeUser<=0){
+                return -1;
+            }else{
+                //同步代码块 防止用户并发操作导致投票数据错误或丢失
+                synchronized (this){
+                    String[] strings= null;
+                    strings= list.split(",");
+                    for(int i=0;i<strings.length;i++){
+                        Integer codeCandidate= this.candidateMapper.updatePollById(Integer.parseInt(strings[i]));
+                        if(codeCandidate<=0){
+                            return -1;
+                        }
                     }
+                    return 1;
                 }
-                return 1;
             }
         }
     }

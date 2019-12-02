@@ -6,6 +6,8 @@ import com.dcits.service.VoteUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class VoteUsersServiceImpl implements VoteUsersService {
 
@@ -31,5 +33,10 @@ public class VoteUsersServiceImpl implements VoteUsersService {
         voteUsers.setVoteId(voteId);
         voteUsers.setChoice(list);
         return this.voteUsersMapper.insertSelective(voteUsers);
+    }
+
+    @Override
+    public List<VoteUsers> findVoteUsersByUsersIdAndVoteId(Integer userId, Integer voteId) {
+        return this.voteUsersMapper.findVoteUsersByUsersIdAndVoteId(userId,voteId);
     }
 }

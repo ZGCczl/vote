@@ -30,5 +30,11 @@ public class Vote implements Serializable {
 
     private Integer voteCount;
 
+    private String explain;
+
+    private String start;
+
+    private String end;
+
     private static final long serialVersionUID = 1L;
 }

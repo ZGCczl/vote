@@ -1,0 +1,505 @@
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>产品目录管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{../css/font.css}">
+    <link rel="stylesheet" th:href="@{../css/xadmin.css}">
+    <!--<link rel="stylesheet" th:href="@{../lib/layui/css/layui.css}">-->
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script th:src="@{../lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/cookie.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        .form-select {
+            height: 30px;
+        }
+
+        .layui-table-cell {
+            height: auto !important;
+            white-space: normal;
+        }
+
+        .organization {
+            padding-top: 5px;
+        }
+
+        .layui-table-cell {
+            text-align: center;
+            height: auto;
+            white-space: normal;
+        }
+
+        .layui-table img {
+            max-width: 160px;
+            max-height: 60px;
+        }
+
+        .layui-upload-list {
+            margin-bottom: 20px;
+        }
+
+        #demo1, #demo2, #demo3 {
+            width: 114px;
+            height: 70px;
+            margin-left: 200px;
+            margin-top: -60px;
+            margin-bottom: 10px;
+        }
+
+        #demoText1, #demoText2, #demoText3 {
+            margin-left: 195px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="x-body">
+    <div class="demoTable" style="text-align: center">
+        <div class="layui-inline">
+            <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+        </div>
+        <button class="layui-btn" data-type="reload">搜索</button>
+    </div>
+    <table id="tc_table" class="tc_table" lay-filter="tc_table"></table>
+
+
+</div>
+<script type="text/html" id="tc_toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delAll"><i class="layui-icon"></i>批量删除
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon"></i>添加</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/javascript" th:inline="none">
+    /*document.documentElement.style.overflow='hidden';*/
+    var documentWidth = $(document).width();
+    layui.use('table', function () {
+        var table = layui.table;
+        var form = layui.form;
+        //第一个实例
+        table.render({
+            elem: '#tc_table'
+            , id: 'tc_table'
+            , height: 440
+            , toolbar: '#tc_toolbar'
+            , method: 'POST'
+            , url: '/vote/findWithPage' //数据接口
+            , page: true //开启分页
+            , cols: [[ //表头
+                {type: 'checkbox'}
+                , {field: 'id', title: 'ID', width: documentWidth * 100 / 1200}
+                , {field: 'name', title: '名称', width: documentWidth * 100 / 1200}
+
+                , {title: '操作', width: documentWidth * 155 / 1200, align: 'center', toolbar: '#barDemo'}//绑定按钮组
+            ]]
+            , skin: 'row' //表格风格
+            , even: true
+            , limits: [8, 15, 30]
+            , limit: 8 //每页默认显示的数量
+            , request: {
+                pageName: 'pageNum', //页码的参数名称，默认：page
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        });
+        var $ = layui.$, active = {
+            reload: function () {
+                var demoReload = $('#demoReload');
+
+                //执行重载
+                table.reload('tc_table', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        name: demoReload.val()
+                    }
+                }, 'data');
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //监听头工具栏事件
+        table.on('toolbar(tc_table)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id)
+                , data = checkStatus.data; //获取选中的数据
+            //json字符串转换成Json数据 eval("("+jsonStr+")")  /JSON.parse(jsonStr)
+            data = eval("(" + JSON.stringify(data) + ")");
+            switch (obj.event) {
+                case 'delAll':
+                    if (data.length === 0) {
+                        layer.msg('请至少选择1行', {icon: 2, time: 1500});
+                    } else {
+                        layer.alert('您确认要删除' + data.length + '条数据吗？', {
+                            skin: 'layui-layer-molv' //样式类名layui-layer-lan或layui-layer-molv  自定义样式
+                            , closeBtn: 1    // 是否显示关闭按钮
+                            , anim: 1 //动画类型
+                            , btn: ['确定', '取消'] //按钮
+                            , icon: 2    // icon
+                            , yes: function () {
+                                for (var i = 0; i < data.length; i++) {
+                                    //发送请求到后台
+                                    $.post("/admin/itsDirection/deleteOne", {id: data[i].id}, function (result) {
+                                        var ret = JSON.parse(result);
+                                        if (ret.code == "1") {//删除成功，刷新当前页表格
+                                            layer.msg("删除成功", {offset: '100px', icon: 1});
+                                            setTimeout(function () {
+                                                location.reload();
+                                            }, 1000);
+                                        } else if (ret.code == "-1") {  //删除失败
+                                            layer.msg("删除失败", {offset: '100px', icon: 2});
+                                            setTimeout(function () {
+                                                location.reload();
+                                            }, 1000);
+                                        }
+                                    });
+                                }
+                                /*   //捉到所有被选中的，发异步进行删除
+                                   layer.msg('删除成功', {icon: 1});
+                                   $(".layui-form-checked").not('.header').parents('tr').remove();*/
+                            }
+                            , btn2: function () {
+                                layer.msg('好的,暂时不给您删除。', {icon: 1, time: 1500});
+                            }
+                        });
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        type: 1,//layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        title: "添加分类信息",
+                        area: ['600px', '400px'],
+                        content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
+                    });
+                    formReset();
+                    setAddForm();
+            }
+        });
+
+        function formReset() {
+            $("#itsDirection").find('input[type=text],input[type=checkbox],input[type=hidden]').each(function () {
+                $(this).val('');
+            });
+        }
+
+        function setAddForm() {
+
+            $("#demo1").attr("src", "http://localhost/itsDirection/images/icons/金融行业.png");
+            $("#demo2").attr("src", "http://localhost/itsDirection/images/image/academyOfEngineering.jpg");
+            $("#demo3").attr("src", "http://localhost/itsDirection/images/atlas/img3_2.jpg");
+            var organization = 1;
+            form.on('switch', function (data) {
+                var boolear = data.elem.checked;
+                if (boolear == true) {
+                    organization = 1;
+                } else {
+                    organization = 0;
+                }
+            });
+            form.on('submit(demo11)', function (massage) {
+                $.ajax({
+                    url: '/admin/itsDirection/addOne',
+                    type: 'POST',
+                    data: {
+                        name: massage.field.name,
+                        organization: organization,
+                        iconPath: massage.field.iconPath,
+                        imagePath: massage.field.imagePath,
+                        atlasPath: massage.field.atlasPath,
+                    },
+                    success: function (msg) {
+                        var jsonmsg = JSON.parse(msg);
+                        var returnCode = jsonmsg.returnCode;//取得返回数据（Sting类型的字符串）的信息进行取值判断
+                        if (returnCode == 200) {
+                            parent.layer.msg("添加成功", {offset: '100px', icon: 6});
+                        } else {
+                            parent.layer.msg("添加失败", {offset: '100px', icon: 5});
+                        }
+                    }
+                })
+            })
+
+        }
+
+
+        //监听行数据工具
+        table.on('tool(tc_table)', function (obj) { //注：tool 是工具条事件名，zq_table 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                , layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+            switch (layEvent) {
+                case 'detail':
+                    //json字符串转换成Json数据 eval("("+jsonStr+")")  /JSON.parse(jsonStr)
+                    var jsonstr = JSON.stringify(data);//json数据转字符串  JSON.stringify(obj)
+                    layer.alert(jsonstr);
+                    break;
+                case 'del':
+                    layer.confirm('您确定删除id：' + data.id + '的数据吗？', function (index) {
+                        //向服务端发送删除指令，在这里可以使用Ajax异步
+                        $.post("/admin/itsDirection/deleteOne", {id: data.id}, function (result) {
+                            var ret = JSON.parse(result);
+                            if (ret.code == "1") {//删除成功，刷新当前页表格
+                                layer.msg("删除成功", {offset: '100px', icon: 1});
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 1000);
+                            } else if (ret.code == "-1") {  //删除失败
+                                layer.msg("删除失败", {offset: '100px', icon: 2});
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 1000);
+                            }
+                        });
+                    });
+                    break;
+                case 'edit':
+                    layer.open({
+                        type: 1,//layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        title: "修改分类信息",
+                        area: ['600px', '400px'],
+                        content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
+                    });
+                    //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取
+                    setFormValue(obj, data);
+            }
+        });
+
+        //监听弹出框表单提交，massage是修改界面的表单数据'submit(demo11),是修改按钮的绑定
+        function setFormValue(obj, data) {
+            var organization = 1;
+            $("#name").attr("value", data.name);
+            $("#demo1").attr("src", data.iconPath);
+            $("#iconPath").attr("value", data.iconPath);
+            $("#demo2").attr("src", data.imagePath);
+            $("#imagePath").attr("value", data.imagePath);
+            $("#demo3").attr("src", data.atlasPath);
+            $("#atlasPath").attr("value", data.atlasPath);
+            var organizat = data.organization;
+            if (organizat == 0) {
+                $("#organization").attr("checked", false);
+                form.render('checkbox');
+            } else {
+                $("#organization").attr("checked", true);
+                form.render('checkbox');
+            }
+
+            form.on('switch', function (data) {
+                var boolear = data.elem.checked;
+                if (boolear == true) {
+                    organization = 1;
+                } else {
+                    organization = 0;
+                }
+            });
+
+            form.on('submit(demo11)', function (massage) {
+                $.ajax({
+                    url: '/admin/itsDirection/editOne',
+                    type: 'POST',
+                    data: {
+                        id: data.id,
+                        name: massage.field.name,
+                        organization: organization,
+                        iconPath: massage.field.iconPath,
+                        imagePath: massage.field.imagePath,
+                        atlasPath: massage.field.atlasPath,
+                    },
+                    success: function (msg) {
+                        var jsonmsg = JSON.parse(msg);
+                        var returnCode = jsonmsg.returnCode;//取得返回数据（Sting类型的字符串）的信息进行取值判断
+                        if (returnCode == 200) {
+                            parent.layer.msg("修改成功", {offset: '100px', icon: 6});
+                        } else {
+                            parent.layer.msg("修改失败", {offset: '100px', icon: 5});
+                        }
+                    }
+                })
+            })
+
+        }
+    });
+
+    layui.use('upload', function () {
+        var upload = layui.upload;
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#test1'
+            , url: '/admin/itsDirection/upload'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                this.data = {'imageName': "iconPath"};//关键代码
+                obj.preview(function (index, file, result) {
+                    $("#demo1").attr('src', result);
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+                $("#iconPath").attr("value", res.data);
+                var demoTextS = $("#demoText1").find('span');
+                if (demoTextS != null) {
+                    demoTextS.hide();
+                }
+                layer.msg('上传成功');
+
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                $("#demoText1").html('<span style="color: #FF5722;">上传失败，请重试！</span>');
+            }
+        });
+
+        var uploadInst = upload.render({
+            elem: '#test2'
+            , url: '/admin/itsDirection/upload'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                this.data = {'imageName': "imagePath"};//关键代码
+                obj.preview(function (index, file, result) {
+                    $("#demo2").attr('src', result);
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+                $("#imagePath").attr("value", res.data);
+                var demoTextS = $("#demoText2").find('span');
+                if (demoTextS != null) {
+                    demoTextS.hide();
+                }
+                layer.msg('上传成功');
+
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                $("#demoText2").html('<span style="color: #FF5722;">上传失败,请重试！</span>');
+            }
+        });
+
+        var uploadInst = upload.render({
+            elem: '#test3'
+            , url: '/admin/itsDirection/upload'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                this.data = {'imageName': "atlasPath"};//关键代码
+                obj.preview(function (index, file, result) {
+                    $("#demo3").attr('src', result);
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+                $("#atlasPath").attr("value", res.data);
+                var demoTextS = $("#demoText3").find('span');
+                if (demoTextS != null) {
+                    demoTextS.hide();
+                }
+                layer.msg('上传成功');
+
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                $("#demoText3").html('<span style="color: #FF5722;">上传失败，请重试！</span>');
+            }
+        });
+
+    });
+
+
+</script>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<div class="layui-row" id="popUpdateTest" style="display:none;">
+    <div class="layui-col-md10">
+        <form class="layui-form layui-from-pane" id="itsDirection" action="" style="margin-top:20px">
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="name" name="name" required lay-verify="required" autocomplete="off"
+                           placeholder="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">组织架构：</label>
+                <div class="layui-input-block organization">
+                    <input type="checkbox" id="organization" name="organization" lay-skin="switch" lay-text="是|否"
+                           checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">图标：</label>
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="test1" lay-filter="test1">上传图片</button>
+                    <div class="layui-upload-list">
+                        <input type="hidden" id="iconPath" name="iconPath" required lay-verify="required"/>
+                        <img class="layui-upload-img" id="demo1" src="">
+                        <p id="demoText1"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">图片：</label>
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="test2" lay-filter="test2">上传图片</button>
+                    <div class="layui-upload-list">
+                        <input type="hidden" id="imagePath" name="imagePath" lay-skin="switch" required
+                               lay-verify="required"/>
+                        <img class="layui-upload-img" id="demo2" src="">
+                        <p id="demoText2"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">图谱：</label>
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="test3" lay-filter="test3">上传图片</button>
+                    <div class="layui-upload-list">
+                        <input type="hidden" id="atlasPath" name="atlasPath" required lay-verify="required"/>
+                        <img class="layui-upload-img" id="demo3" src="">
+                        <p id="demoText3"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin-top:40px">
+                <div class="layui-input-block">
+                    <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="demo11">确认</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+</html>

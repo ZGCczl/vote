@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>DCITS投票系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <link rel="stylesheet" href="lib/layui/css/global.css">
+</head>
+<style type="text/css">
+    .vote-none {
+        text-align: center;
+        height: 75px;
+        line-height: 75px;
+        font-size: 16px;
+    }
+    .fly-list-info{
+        padding-left: 10px;
+    }
+    .vote-top-container{
+        padding-left: 30px;
+    }
+    .vote-title {
+        font-size: 24px;
+        line-height: 60px;
+        color: #5FB878;
+        font-family: monospace;
+    }
+</style>
+<body>
+
+<div class="fly-header layui-bg-black">
+    <div class="layui-container vote-top-container">
+        <span class="vote-title">DCITS投票系统</span>
+    </div>
+</div>
+
+<div class="layui-container container">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md10">
+            <div class="fly-panel" style="margin-bottom: 0;">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <input class="itcode" th:value="${itcode}" hidden="hidden" />
+                    <ul class="layui-tab-title">
+                        <li class="li-first layui-this">正在进行</li>
+                        <li class="li-two">即将开始</li>
+                        <li class="li-three">已经结束</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show vote-first">
+                            <ul class="fly-list">
+                                <div class="vote-none vote-none-first" hidden="hidden">
+                                    <span>暂无投票活动</span>
+                                </div>
+                                <li class="vote-li" th:each="uwList : ${underwayList}">
+                                    <h2>
+                                        <span class="layui-badge layui-bg-green">正在进行</span>
+                                        <input class="voteId" th:value="${uwList.id}" hidden="hidden"/>
+                                        <input class="vote-time" value="0" hidden="hidden"/>
+                                        <a th:text="${uwList.name}"></a>
+                                    </h2>
+                                    <div class="fly-list-info">
+                                        <span class="vote-show" th:text="'活动时间:'+${uwList.start}+'/'+${uwList.end}"></span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item vote-two">
+                            <ul class="fly-list">
+                                <div class="vote-none vote-none-two" hidden="hidden">
+                                    <span>暂无投票活动</span>
+                                </div>
+                                <li class="vote-li" th:each="nsList : ${notStartedList}">
+                                    <h2>
+                                        <span class="layui-badge layui-bg-orange">即将开始</span>
+                                        <input class="voteId" th:value="${nsList.id}" hidden="hidden"/>
+                                        <input class="vote-time" value="1" hidden="hidden"/>
+                                        <a th:text="${nsList.name}"></a>
+                                    </h2>
+                                    <div class="fly-list-info">
+                                        <span class="vote-show" th:text="'活动时间:'+${nsList.start}+'/'+${nsList.end}"></span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item vote-three">
+                            <ul class="fly-list">
+                                <div class="vote-none vote-none-three" hidden="hidden">
+                                    <span>暂无投票活动</span>
+                                </div>
+                                <li class="vote-li" th:each="fList : ${finishList}">
+                                    <h2>
+                                        <span class="layui-badge layui-bg-red">已经结束</span>
+                                        <input class="voteId" th:value="${fList.id}" hidden="hidden"/>
+                                        <input class="vote-time" value="-1" hidden="hidden"/>
+                                        <a th:text="${fList.name}"></a>
+                                    </h2>
+                                    <div class="fly-list-info">
+                                        <span class="vote-show" th:text="'活动时间:'+${fList.start}+'/'+${fList.end}"></span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="lib/layui/layui.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script>
+    layui.cache.page = '';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '../res/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: 'lib/layui/'
+    })
+    layui.extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+<script type="text/javascript">
+
+    //页面加载完成后执行
+    window.onload = function () {
+        conceal();
+    }
+
+    function conceal(){
+        var first= $(".vote-first>ul>li");
+        var two= $(".vote-two>ul>li");
+        var three= $(".vote-three>ul>li");
+        if(first==null||first.length==0||first==""){
+            $(".vote-none-first").show();
+            if(two!=null||two.length!=0||two!=""){
+                $(".vote-first").removeClass("layui-show");
+                $(".vote-two").addClass("layui-show");
+                $(".li-first").removeClass("layui-this");
+                $(".li-two").addClass("layui-this");
+            }
+        }
+        if(two==null||two.length==0||two==""){
+            $(".vote-none-two").show();
+        }
+        if(three==null||three.length==0||three==""){
+            $(".vote-none-three").show();
+        }
+    }
+
+    var url="";
+
+    if (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
+        url="/vote/index?itcode=";
+    }else{
+        url="/vote/indexPhone?itcode=";
+    }
+
+    //layui实例化
+    layui.use('layer', function() {
+        var $ = layui.jquery, layer = layui.layer;
+
+        $(".vote-li").click(function () {
+           var voteTime= $(this).find(".vote-time").val();
+            var voteId= $(this).find(".voteId").val();
+           if(voteTime==1){
+               layer.msg("该活动还未开始,敬请期待!");
+           }else if(voteTime==-1){
+               layer.msg("该活动已经结束了哦!");
+           }else{
+               var itcode= $(".itcode").val();
+               window.location.href = url+itcode+'&voteId='+voteId;
+           }
+        });
+
+    });
+
+</script>
+
+
+</body>
+</html>

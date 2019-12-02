@@ -26,4 +26,11 @@ public class DateUtils {
         return format.format(date);
 
     }
+
+    //将Date型日期转化成指定格式的字符串形式。例如：yyyy-MM-dd HH:mm:ss
+    public static String changeTimeOfDay(Date date){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+
+    }
 }

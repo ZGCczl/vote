@@ -27,20 +27,20 @@ public class LoginController {
         JSONObject jsonObject= new JSONObject();
         DcitsLdapAuth auth = new DcitsLdapAuth();
             if (auth.ldapAuthentication(auth.TDS_LDAP_URL, "cn=" + itcode , password)) {
-            Users userVo=  this.usersService.findUserByItcode(itcode);
-            if(userVo==null){
-                Users users= new Users();
-                users.setName(itcode);
-                users.setItcode(itcode);
-                users.setPassword(password);
-              Integer code= this.usersService.addUsers(users);
-              if(code<=0){
-                  jsonObject.put("code",-2);
-                  jsonObject.put("msg","网络异常，请稍后重试");
-              }
-            }
-            jsonObject.put("code",200);
-            jsonObject.put("msg","登录成功");
+                Users userVo=  this.usersService.findUserByItcode(itcode);
+                if(userVo==null){
+                    Users users= new Users();
+                    users.setName(itcode);
+                    users.setItcode(itcode);
+                    users.setPassword(password);
+                    Integer code= this.usersService.addUsers(users);
+                    if(code<=0){
+                        jsonObject.put("code",-2);
+                        jsonObject.put("msg","网络异常，请稍后重试");
+                    }
+                }
+                jsonObject.put("code",200);
+                jsonObject.put("msg","登录成功");
         } else {
             jsonObject.put("code",-1);
             jsonObject.put("msg","用户名或密码错误");

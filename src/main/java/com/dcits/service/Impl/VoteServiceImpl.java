@@ -49,7 +49,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public int edit(int id, String name, String starttime, String endtime, Integer candidateCount, Integer voteCount) {
+    public int edit(int id, String name, String starttime, String endtime, Integer candidateCount, Integer voteCount,String explain) {
         Date startTime= DateUtils.convert(starttime);
         Date endTime= DateUtils.convert(endtime);
         if(startTime==null || endTime==null){
@@ -62,12 +62,13 @@ public class VoteServiceImpl implements VoteService {
             vote.setEndtime(endTime);
             vote.setCandidateCount(candidateCount);
             vote.setVoteCount(voteCount);
+            vote.setExplain(explain);
             return this.voteMapper.updateByPrimaryKeySelective(vote);
         }
     }
 
     @Override
-    public int add(String name, String starttime, String endtime, Integer candidateCount, Integer voteCount) {
+    public int add(String name, String starttime, String endtime, Integer candidateCount, Integer voteCount,String explain) {
         Date startTime= DateUtils.convert(starttime);
         Date endTime= DateUtils.convert(endtime);
         if(startTime==null || endTime==null){
@@ -79,6 +80,7 @@ public class VoteServiceImpl implements VoteService {
             vote.setEndtime(endTime);
             vote.setCandidateCount(candidateCount);
             vote.setVoteCount(voteCount);
+            vote.setExplain(explain);
             return this.voteMapper.insertSelective(vote);
         }
     }
@@ -114,5 +116,15 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public Vote findVoteByVoteid(Integer voteId) {
         return this.voteMapper.selectByPrimaryKey(voteId);
+    }
+
+    @Override
+    public List<Vote> findVoteOfNotStarted() {
+        return this.voteMapper.findVoteOfNotStarted();
+    }
+
+    @Override
+    public List<Vote> findVoteOfFinish() {
+        return this.voteMapper.findVoteOfFinish();
     }
 }
