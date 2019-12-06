@@ -131,6 +131,8 @@
 </script>
 <script type="text/javascript">
 
+
+
     //页面加载完成后执行
     window.onload = function () {
         conceal();
@@ -169,17 +171,35 @@
     layui.use('layer', function() {
         var $ = layui.jquery, layer = layui.layer;
 
+        $(function(){
+            myBrowser();
+        });
+
+        /***
+         * 获取当前浏览器类型
+         */
+        function myBrowser() {
+            var explorer =navigator.userAgent;
+            //ie
+            if (!!window.ActiveXObject || "ActiveXObject" in window){
+                alert("建议您使用Chrome浏览器或者手机端参与活动哦！");
+                window.opener=null;
+                window.open('','_self');
+                window.close();
+            }
+        }
+
         $(".vote-li").click(function () {
-           var voteTime= $(this).find(".vote-time").val();
+            var voteTime= $(this).find(".vote-time").val();
             var voteId= $(this).find(".voteId").val();
-           if(voteTime==1){
-               layer.msg("该活动还未开始,敬请期待!");
-           }else if(voteTime==-1){
-               layer.msg("该活动已经结束了哦!");
-           }else{
-               var itcode= $(".itcode").val();
-               window.location.href = url+itcode+'&voteId='+voteId;
-           }
+            if(voteTime==1){
+                layer.msg("该活动还未开始,敬请期待!");
+            }else if(voteTime==-1){
+                layer.msg("该活动已经结束了哦!");
+            }else{
+                var itcode= $(".itcode").val();
+                window.location.href = url+itcode+'&voteId='+voteId;
+            }
         });
 
     });

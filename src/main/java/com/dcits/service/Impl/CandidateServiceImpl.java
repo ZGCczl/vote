@@ -123,4 +123,14 @@ public class CandidateServiceImpl implements CandidateService {
         return this.candidateMapper.countPoll();
     }
 
+    @Override
+    public List<String> findNameByVoteId(Integer voteid) {
+        return this.candidateMapper.findNameByVoteId(voteid);
+    }
+
+    @Override
+    public List<Candidate> findCandidateIdByVoteID(Integer voteid) {
+        return this.candidateMapper.findCandidateIdByVoteID(voteid);
+    }
+
 }

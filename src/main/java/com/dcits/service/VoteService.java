@@ -1,5 +1,6 @@
 package com.dcits.service;
 
+import com.dcits.pojo.DistributionOfPoll;
 import com.dcits.pojo.Vote;
 import com.github.pagehelper.PageInfo;
 
@@ -28,4 +29,6 @@ public interface VoteService {
     List<Vote> findVoteOfNotStarted();
 
     List<Vote> findVoteOfFinish();
+
+    List<DistributionOfPoll> findItcodeExportWithPage(Integer voteid);
 }

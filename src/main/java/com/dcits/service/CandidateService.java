@@ -23,4 +23,8 @@ public interface CandidateService {
     int delete(Integer id);
 
     Integer countPoll();
+
+    List<String> findNameByVoteId(Integer voteid);
+
+    List<Candidate> findCandidateIdByVoteID(Integer voteid);
 }

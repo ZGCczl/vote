@@ -169,4 +169,12 @@
     select sum(poll) from candidate
   </select>
 
+  <select id="findNameByVoteId" resultType="java.lang.String">
+    select name from candidate where voteid=#{voteid,jdbcType=INTEGER} order by id asc
+  </select>
+
+  <select id="findCandidateIdByVoteID" resultType="com.dcits.pojo.Candidate">
+      select id,name from candidate where voteid=#{voteid,jdbcType=INTEGER} order by id asc
+  </select>
+
 </mapper>

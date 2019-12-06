@@ -41,13 +41,13 @@ public class CommomController {
      * 初始化到登录页面
      * @return
      */
-    @RequestMapping(value = "/")
+    /*@RequestMapping(value = "/")
     public String toLogin(Model model){
         //初始化当前时间可供投票的活动列表以供用户选择
         List<Vote> voteList= this.voteService.findVoteByTime();
         model.addAttribute("voteList",voteList);
         return "login";
-    }
+    }*/
 
     public HashMap<String,Object> findCandidateAll(String itcode,Integer voteId, Integer userId){
         HashMap<String,Object> map= new HashMap<>();
@@ -83,7 +83,7 @@ public class CommomController {
      * @param request
      * @return
      */
-    /*@RequestMapping(value = "/")
+   /* @RequestMapping(value = "/")
     public String login(Model model,HttpServletRequest request){
         String username = request.getHeader("iv-user");  //获取request header中的用户名字段
         if (username != null ) {  //验证是否能够获取用户ITCODE
@@ -134,7 +134,7 @@ public class CommomController {
      * @param request
      * @return
      */
-    /*@RequestMapping(value = "/")
+    @RequestMapping(value = "/")
     public String login(Model model,HttpServletRequest request){
         String username = request.getHeader("iv-user");  //获取request header中的用户名字段
         if (username != null ) {  //验证是否能够获取用户ITCODE
@@ -168,7 +168,7 @@ public class CommomController {
         }else{
             return "404";
         }
-    }*/
+    }
 
     /**
      * 最终版：手机端访问投票活动分类页面方法

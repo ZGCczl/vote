@@ -168,4 +168,15 @@
   <select id="countFinished" resultType="java.lang.Integer">
     select count(id) from vote where now() > endtime
   </select>
+
+  <select id="findItcodeByVoteidAndCandidateId" resultType="com.dcits.pojo.CountPollOfSection">
+    select c.id as cId,s.id as sId,count(u.id) as count
+    from users as u
+    left join section as s on s.id=u.section_id
+    left join vote_users as vu on vu.user_id= u.id
+    left join candidate as c on c.voteid=vu.vote_id
+    where u.id in (SELECT vu.user_id FROM "vote_users"  where vu.vote_id= #{voteId,jdbcType=INTEGER} and position(#{candidateId,jdbcType=VARCHAR} in vu.choice)>0)
+    and c.id=#{cId,jdbcType=INTEGER}
+    group by s.id,c.id order by s.id
+  </select>
 </mapper>

@@ -1,15 +1,21 @@
 package com.dcits.controller;
 
 import cn.hutool.json.JSONObject;
+import com.dcits.pojo.Candidate;
+import com.dcits.pojo.DistributionOfPoll;
 import com.dcits.pojo.Vote;
+import com.dcits.service.CandidateService;
 import com.dcits.service.VoteService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "vote")
@@ -17,6 +23,8 @@ public class VoteController {
 
     @Autowired
     VoteService voteService;
+    @Autowired
+    CandidateService candidateService;
 
     /**
      * 请求投票活动信息页面
@@ -117,6 +125,55 @@ public class VoteController {
         int code = this.voteService.delete(id);
         String jsonString = CommomController.delete(code);
         return jsonString;
+    }
+
+    @RequestMapping(value = "itcodeExport")
+    public String toItcodeExport(Model model){
+        List<Vote> votes= this.voteService.findVote();
+        model.addAttribute("votes",votes);
+        return "admin/itcodeExport";
+    }
+
+    @RequestMapping(value = "findNameByVoteId",method = RequestMethod.POST)
+    @ResponseBody
+    public String findNameByVoteId(@RequestParam(value = "voteid") Integer voteid){
+        JSONObject jsonObject= new JSONObject();
+        List<String> list= this.candidateService.findNameByVoteId(voteid);
+        if(list==null||list.size()==0){
+            jsonObject.put("code", -1);
+            jsonObject.put("msg", "网络波动，请稍后重试");
+        }else{
+            jsonObject.put("code", 1);
+            jsonObject.put("msg", "查询成功");
+            jsonObject.put("data",list);
+        }
+        return jsonObject.toString();
+    }
+
+    /**
+     *
+     * @param voteid
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/itcodeExport/findWithPage")
+    public String findItcodeExportWithPage(
+            @RequestParam(value = "voteid", defaultValue = "0") Integer voteid){
+        JSONObject jsonObject= new JSONObject();
+        List<DistributionOfPoll> list= this.voteService.findItcodeExportWithPage(voteid);
+        if(list==null || list.size()==0){
+            jsonObject.put("code",-1);
+            jsonObject.put("msg","无数据");
+            jsonObject.put("count","");
+            jsonObject.put("data","");
+            return jsonObject.toString();
+        }else{
+            jsonObject.put("code", 0);
+            jsonObject.put("msg", "");
+            jsonObject.put("count", "");
+            jsonObject.put("data", list);
+            return jsonObject.toString();
+        }
     }
 
 

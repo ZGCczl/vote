@@ -1,5 +1,6 @@
 package com.dcits.dao;
 
+import com.dcits.pojo.CountPollOfSection;
 import com.dcits.pojo.Vote;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -39,4 +40,6 @@ public interface VoteMapper {
     List<Vote> findVoteOfNotStarted();
 
     List<Vote> findVoteOfFinish();
+
+    List<CountPollOfSection> findItcodeByVoteidAndCandidateId(@Param("voteId") Integer voteId, @Param("cId") Integer cId, @Param("candidateId") String candidateId);
 }

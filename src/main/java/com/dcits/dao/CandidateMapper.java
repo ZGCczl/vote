@@ -27,4 +27,8 @@ public interface CandidateMapper {
     List<Candidate> findWithVoteIdAndName(@Param("voteid") Integer voteid, @Param("name") String name);
 
     Integer countPoll();
+
+    List<String> findNameByVoteId(Integer voteid);
+
+    List<Candidate> findCandidateIdByVoteID(Integer voteid);
 }
