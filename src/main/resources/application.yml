@@ -2,10 +2,10 @@ spring:
   application:
     name: VoteApplication
   datasource:
-    url: jdbc:postgresql://10.0.2.137/vote?characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false;autoReconnect=true
+    url: jdbc:postgresql://******/vote?characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false;autoReconnect=true
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: postgres
+    username: 
+    password:
   #配置druid数据源
   type: com.alibaba.druid.pool.DruidDataSource
   initialSize: 5
